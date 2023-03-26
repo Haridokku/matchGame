@@ -1,0 +1,10 @@
+.list-item {
+  width: 150px;
+  border-radius: 12px;
+  margin: 15px;
+}
+.thumbnail {
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid transparent;
+}
