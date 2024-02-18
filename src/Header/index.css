@@ -1,0 +1,29 @@
+.nav-container {
+  background-color: #2c0e3a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 20vh;
+  padding: 15px;
+}
+.logo {
+  width: 150px;
+}
+.score-card {
+  display: flex;
+}
+.score {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 'Roboto';
+}
+.time {
+  width: 30px;
+  margin-left: 10px;
+  margin-right: 5px;
+}
+.seconds {
+  color: #aca18c;
+  font-size: 18px;
+  font-weight: bold;
+}
