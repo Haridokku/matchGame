@@ -4,6 +4,8 @@ import TabItem from './TabItem'
 
 import ProjectItem from './ProjectItem'
 
+import Header from './Header'
+
 import './App.css'
 
 // These are the lists used in the application. You can move them to any component needed.
@@ -258,27 +260,33 @@ class App extends Component {
   state = {
     activeTabId: tabsList[0].tabId,
     score: 0,
-    activeImageUrl: imagesList[0].imageUrl,
+    activeId: imagesList[0].id,
     seconds: 60,
     isTimerRunning: true,
   }
 
   componentDidMount() {
-    console.log(this.componentDidMount)
-    this.timerId = setInterval(this.timeChanges, 1000)
+    this.initiateTimer()
   }
 
   componentWillUnmount() {
-    clearInterval(this.timerId)
+    clearInterval(this.intervalId)
   }
 
   timeChanges = () => {
     const {seconds} = this.state
     if (seconds === 0) {
-      clearInterval(this.timerId)
+      clearInterval(this.intervalId)
       this.setState({isTimerRunning: false})
     } else {
       this.setState(prevState => ({seconds: prevState.seconds - 1}))
+    }
+  }
+
+  initiateTimer = () => {
+    const {isTimerRunning} = this.state
+    if (isTimerRunning) {
+      this.intervalId = setInterval(this.timeChanges, 1000)
     }
   }
 
@@ -286,36 +294,41 @@ class App extends Component {
     this.setState({activeTabId: tabValue})
   }
 
-  checkingImage = imgUrl => {
-    const {activeImageUrl} = this.state
-    console.log(imgUrl)
-    console.log(activeImageUrl)
-    if (imgUrl === activeImageUrl) {
+  checkingImage = id => {
+    const {activeId} = this.state
+    if (activeId === id) {
       this.setState(prevState => ({score: prevState.score + 1}))
     } else {
-      clearInterval(this.timerId)
+      clearInterval(this.intervalId)
       this.setState({isTimerRunning: false})
     }
-    const randomImage = imagesList.sort(() => Math.random() - 0.5)
-    this.setState({activeImageUrl: randomImage[0].imageUrl})
+    const val = Math.ceil(Math.random() * imagesList.length)
+    this.setState({activeId: imagesList[val].id})
   }
 
   onPlayAgainGame = () => {
     this.setState({isTimerRunning: true})
     this.setState({seconds: 60})
     this.setState({score: 0})
+    this.initiateTimer()
   }
 
   displayImages = () => {
-    const {activeTabId, activeImageUrl} = this.state
+    const {activeTabId, activeId} = this.state
     const filteredProjects = imagesList.filter(
       each => each.category === activeTabId,
     )
+    const imageObject = imagesList.filter(item => item.id === activeId)
+    console.log(imageObject)
     return (
       <div className="display-container">
         <ul className="display-img">
           <li>
-            <img src={activeImageUrl} alt="match" className="img-url" />
+            <img
+              src={imageObject[0].imageUrl}
+              alt="match"
+              className="img-url"
+            />
           </li>
         </ul>
 
@@ -349,6 +362,7 @@ class App extends Component {
         <img
           src="https://assets.ccbp.in/frontend/react-js/match-game-trophy.png"
           alt="trophy"
+          className="trophy"
         />
         <p className="your-score">YOUR SCORE</p>
         <h1 className="score-value">{score}</h1>
@@ -363,7 +377,21 @@ class App extends Component {
       </div>
     )
   }
-  /*
+
+  render() {
+    const {score, seconds, isTimerRunning} = this.state
+    return (
+      <div className="app-container">
+        <Header score={score} seconds={seconds} />
+        {isTimerRunning ? this.displayImages() : this.displayScore()}
+      </div>
+    )
+  }
+}
+
+export default App
+
+/*
     const filteredProjectsList = this.getFilteredProject()
     const getRandomImage = this.getImage()
      getFilteredProject = () => {
@@ -379,38 +407,9 @@ class App extends Component {
     this.setState({activeImageUrl: randomImage[0].imageUrl})
   }
   */
-
-  render() {
-    const {score, seconds, isTimerRunning} = this.state
-    return (
-      <div className="app-container">
-        <nav className="nav-container">
-          <ul>
-            <li>
-              <img
-                src="https://assets.ccbp.in/frontend/react-js/match-game-website-logo.png"
-                alt="website logo"
-                className="logo"
-              />
-            </li>
-          </ul>
-
-          <div className="score-card">
-            <p className="score">
-              Score:<span className="seconds">{score}</span>
-            </p>
-            <img
-              src="https://assets.ccbp.in/frontend/react-js/match-game-timer-img.png"
-              alt="timer"
-              className="time"
-            />
-            <p className="seconds">{seconds} sec</p>
-          </div>
-        </nav>
-        {isTimerRunning ? this.displayImages() : this.displayScore()}
-      </div>
-    )
-  }
-}
-
-export default App
+/* const randomImage = imagesList.sort(() => Math.random() - 0.5)
+    this.setState({activeImageUrl: randomImage[0].imageUrl})
+        activeImageUrl: imagesList[0].imageUrl,
+        callTimer = () => {
+    return ()
+  } */
